@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Activity,
@@ -7,45 +7,48 @@ import {
   Sparkles,
   ArrowRight,
   Inbox,
-  User,
 } from 'lucide-react';
-import Card from '../components/ui/Card';
-import Badge from '../components/ui/Badge';
 import { useAppData } from '../context/AppDataContext';
 import { ROUTES } from '../utils/constants';
 import { formatDateTime } from '../utils/formatters';
 
 /**
  * Activity Log Page (Route: /activity)
- * Chronological feed of member submissions, verified completions,
- * and point reversals across community campaign operations.
+ * Modern connected vertical timeline stream inspired by Linear and GitHub audit logs.
  */
 export function ActivityPage() {
   const { activities, targets } = useAppData();
+  const [filterType, setFilterType] = useState('all'); // 'all' | 'target_completed' | 'target_completion_undone'
+
+  // Filter activities based on selected segmented tab
+  const filteredActivities = useMemo(() => {
+    if (filterType === 'all') return activities;
+    return activities.filter((act) => act.type === filterType);
+  }, [activities, filterType]);
 
   // Helper to verify if target still exists in active state collection
   function doesTargetExist(targetId) {
     return targets.some((t) => t.id === targetId);
   }
 
+  const completionCount = activities.filter((a) => a.type === 'target_completed').length;
+  const undoCount = activities.filter((a) => a.type === 'target_completion_undone').length;
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border-subtle pb-5">
         <div>
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-green-subtle border border-[#D6E5DA] text-accent-primary">
-              <Activity className="h-4 w-4" />
-            </div>
-            <h1 className="text-xl font-semibold tracking-tight text-text-primary">
-              Activity Log
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight text-text-primary">
+              Activity Stream
             </h1>
-            <Badge variant="neutral">
-              {activities.length} {activities.length === 1 ? 'event' : 'events'}
-            </Badge>
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#F1F3F5] text-text-secondary tabular-nums border border-border-subtle">
+              {activities.length} events
+            </span>
           </div>
           <p className="mt-1 text-sm text-text-secondary">
-            Chronological audit trail of verified completions, point distributions, and community actions.
+            Verifiable chronological record of mission claims, point distribution, and member actions.
           </p>
         </div>
 
@@ -53,127 +56,163 @@ export function ActivityPage() {
           to={ROUTES.DASHBOARD}
           className="inline-flex items-center gap-1.5 text-xs font-medium text-text-secondary hover:text-text-primary transition-colors self-start sm:self-auto"
         >
-          <span>View Operations</span>
+          <span>Operations Feed</span>
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
 
-      {/* Activity Timeline List */}
-      {activities.length > 0 ? (
-        <Card className="p-0 overflow-hidden">
-          <div className="divide-y divide-border-subtle/80">
-            {activities.map((activity) => {
-              const isCompletion = activity.type === 'target_completed';
-              const targetExists = doesTargetExist(activity.targetId);
+      {/* Segmented Filter Pills */}
+      <div className="flex items-center gap-2">
+        <div className="inline-flex items-center p-1 rounded-lg border border-border-subtle bg-[#F8F9FA]">
+          <button
+            type="button"
+            onClick={() => setFilterType('all')}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer ${
+              filterType === 'all'
+                ? 'bg-card-bg text-text-primary font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-border-subtle/80'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            All Events ({activities.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterType('target_completed')}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer ${
+              filterType === 'target_completed'
+                ? 'bg-card-bg text-text-primary font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-border-subtle/80'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            Completions ({completionCount})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterType('target_completion_undone')}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer ${
+              filterType === 'target_completion_undone'
+                ? 'bg-card-bg text-text-primary font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-border-subtle/80'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            Reversals ({undoCount})
+          </button>
+        </div>
+      </div>
 
-              return (
-                <article
-                  key={activity.id}
-                  className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#FAFBFB] transition-colors"
+      {/* Connected Vertical Timeline Stream */}
+      {filteredActivities.length > 0 ? (
+        <div className="relative pl-6 sm:pl-8 ml-3 sm:ml-4 border-l-2 border-border-subtle space-y-6 pt-2 pb-4">
+          {filteredActivities.map((activity) => {
+            const isCompletion = activity.type === 'target_completed';
+            const targetExists = doesTargetExist(activity.targetId);
+
+            return (
+              <div key={activity.id} className="relative group">
+                {/* Connected Timeline Node Dot */}
+                <div
+                  className={`absolute -left-[31px] sm:-left-[39px] top-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-app-bg transition-transform group-hover:scale-110 ${
+                    isCompletion
+                      ? 'bg-green-subtle text-text-success border-[#D6E5DA]'
+                      : 'bg-[#F1F3F5] text-text-secondary border-border-subtle'
+                  }`}
                 >
-                  <div className="flex items-start gap-3 sm:gap-4 min-w-0">
-                    {/* Status Icon */}
-                    <div
-                      className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 mt-0.5 ${
-                        isCompletion
-                          ? 'bg-green-subtle border border-[#D6E5DA] text-text-success'
-                          : 'bg-[#F1F3F5] border border-border-subtle text-text-secondary'
-                      }`}
-                    >
-                      {isCompletion ? (
-                        <CheckCircle2 className="h-4 w-4" />
-                      ) : (
-                        <RotateCcw className="h-4 w-4" />
-                      )}
+                  {isCompletion ? (
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                  ) : (
+                    <RotateCcw className="h-3.5 w-3.5" />
+                  )}
+                </div>
+
+                {/* Event Card Content */}
+                <div className="rounded-xl border border-border-subtle bg-card-bg p-4 card-surface transition-all group-hover:border-[#CBD5E1]">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border-subtle/60 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#191D23] text-white text-[10px] font-bold">
+                        {activity.actor.slice(0, 2).toUpperCase()}
+                      </span>
+                      <strong className="text-xs font-semibold text-text-primary">
+                        {activity.actor}
+                      </strong>
+                      <span className="text-xs text-text-secondary">
+                        {isCompletion ? 'completed campaign objective' : 'reversed completion for'}
+                      </span>
                     </div>
 
-                    {/* Event Description */}
-                    <div className="space-y-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        {/* Actor badge */}
-                        <div className="inline-flex items-center gap-1 text-xs font-medium text-text-primary">
-                          <User className="h-3 w-3 text-text-secondary" />
-                          <span>{activity.actor}</span>
-                        </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold tabular-nums border ${
+                          isCompletion
+                            ? 'bg-green-subtle text-text-success border-[#D6E5DA]'
+                            : 'bg-[#F1F3F5] text-text-secondary border-border-subtle'
+                        }`}
+                      >
+                        <Sparkles className="h-2.5 w-2.5" />
+                        <span>{isCompletion ? `+${activity.points}` : `-${activity.points}`} pts</span>
+                      </span>
 
-                        <span className="text-xs text-text-secondary">
-                          {isCompletion
-                            ? 'completed target'
-                            : 'undid completion for'}
-                        </span>
-
-                        {/* Points badge */}
-                        <Badge
-                          variant={isCompletion ? 'success' : 'neutral'}
-                        >
-                          <span className="flex items-center gap-1">
-                            {isCompletion && <Sparkles className="h-3 w-3" />}
-                            {isCompletion
-                              ? `+${activity.points} pts`
-                              : `-${activity.points} pts`}
-                          </span>
-                        </Badge>
-                      </div>
-
-                      {/* Target Link / Title */}
-                      <div className="text-sm font-medium text-text-primary">
-                        {targetExists ? (
-                          <Link
-                            to={`/targets/${activity.targetId}`}
-                            className="hover:text-accent-primary transition-colors underline-offset-2 hover:underline line-clamp-1"
-                            title={`View details for ${activity.targetTitle}`}
-                          >
-                            {activity.targetTitle}
-                          </Link>
-                        ) : (
-                          <span className="text-text-secondary line-clamp-1">
-                            {activity.targetTitle}
-                          </span>
-                        )}
-                      </div>
+                      <time
+                        dateTime={activity.timestamp}
+                        className="text-[11px] text-text-secondary tabular-nums"
+                      >
+                        {formatDateTime(activity.timestamp)}
+                      </time>
                     </div>
                   </div>
 
-                  {/* Timestamp and Details Link */}
-                  <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border-subtle/60 text-xs text-text-secondary">
-                    <time dateTime={activity.timestamp}>
-                      {formatDateTime(activity.timestamp)}
-                    </time>
+                  {/* Target Title & Navigation Link */}
+                  <div className="mt-3 flex items-center justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      {targetExists ? (
+                        <Link
+                          to={`/targets/${activity.targetId}`}
+                          className="text-xs sm:text-sm font-semibold text-text-primary hover:text-accent-primary transition-colors truncate block"
+                        >
+                          "{activity.targetTitle}"
+                        </Link>
+                      ) : (
+                        <span className="text-xs sm:text-sm font-semibold text-text-secondary truncate block">
+                          "{activity.targetTitle}"
+                        </span>
+                      )}
+                    </div>
 
                     {targetExists && (
                       <Link
                         to={`/targets/${activity.targetId}`}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border border-border-subtle bg-card-bg text-text-primary hover:text-accent-primary hover:bg-[#F8F9FA] transition-colors"
+                        className="inline-flex items-center gap-1 text-[11px] font-medium text-text-secondary hover:text-text-primary transition-colors shrink-0"
                       >
-                        <span>Target</span>
+                        <span>View Directive</span>
                         <ArrowRight className="h-3 w-3" />
                       </Link>
                     )}
                   </div>
-                </article>
-              );
-            })}
-          </div>
-        </Card>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       ) : (
         /* Empty State */
-        <Card className="p-12 text-center flex flex-col items-center justify-center">
+        <div className="rounded-xl border border-dashed border-border-subtle bg-card-bg p-12 text-center flex flex-col items-center justify-center card-surface">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F1F3F5] text-text-secondary mb-3">
             <Inbox className="h-6 w-6" />
           </div>
-          <h2 className="text-base font-semibold text-text-primary">
-            No activity recorded yet
+          <h2 className="text-sm font-semibold text-text-primary">
+            No activity matches filter
           </h2>
-          <p className="mt-1 text-sm text-text-secondary max-w-sm leading-relaxed">
-            When members complete campaign targets or reverse actions, chronological verification logs will appear here.
+          <p className="mt-1 text-xs text-text-secondary max-w-sm leading-relaxed">
+            There are no recorded events matching this filter category. Complete targets from the operations dashboard to stream live updates here.
           </p>
-          <Link
-            to={ROUTES.DASHBOARD}
-            className="mt-5 inline-flex items-center gap-2 rounded-lg bg-text-primary px-4 py-2 text-xs font-medium text-white hover:bg-[#2D333B] active:bg-[#121519] transition-colors shadow-xs"
+          <button
+            type="button"
+            onClick={() => setFilterType('all')}
+            className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border-subtle text-xs font-medium text-text-primary hover:bg-[#F8F9FA] transition-colors cursor-pointer"
           >
-            <span>Go to Operations Dashboard</span>
-          </Link>
-        </Card>
+            <Activity className="h-3.5 w-3.5" />
+            <span>Show all events</span>
+          </button>
+        </div>
       )}
     </div>
   );
