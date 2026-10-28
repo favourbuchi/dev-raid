@@ -9,10 +9,14 @@ const VARIANTS = {
     'bg-green-subtle text-text-success border border-[#D6E5DA]',
   warning:
     'bg-[#FCF5ED] text-accent-warning border border-[#F2DFC7]',
+  danger:
+    'bg-[#FDF2F2] text-[#991B1B] border border-[#F8D7DA]',
   neutral:
     'bg-[#F1F3F5] text-text-secondary border border-border-subtle',
   accent:
     'bg-green-subtle text-accent-primary border border-[#D6E5DA]',
+  outline:
+    'bg-transparent text-text-secondary border border-border-subtle',
 };
 
 export function Badge({
