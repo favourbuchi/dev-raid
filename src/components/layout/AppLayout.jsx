@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, Link } from 'react-router-dom';
 import {
-  Crosshair,
   LayoutDashboard,
   PlusCircle,
   Activity,
@@ -9,12 +8,12 @@ import {
   Users,
   User,
   Settings,
-  ShieldCheck,
-  Radio,
+  Target,
+  Plus,
 } from 'lucide-react';
 import { ROUTES } from '../../utils/constants';
+import Badge from '../ui/Badge';
 
-// Icon mapping dictionary for navigation items
 const NAV_ICONS = {
   LayoutDashboard,
   PlusCircle,
@@ -28,7 +27,7 @@ const NAV_ICONS = {
 const NAV_LINKS = [
   { label: 'Operations', path: ROUTES.DASHBOARD, icon: 'LayoutDashboard' },
   { label: 'Create Target', path: ROUTES.TARGET_NEW, icon: 'PlusCircle' },
-  { label: 'Activity Log', path: ROUTES.ACTIVITY, icon: 'Activity' },
+  { label: 'Activity', path: ROUTES.ACTIVITY, icon: 'Activity' },
   { label: 'Leaderboard', path: ROUTES.LEADERBOARD, icon: 'Trophy' },
   { label: 'Community', path: ROUTES.COMMUNITY, icon: 'Users' },
   { label: 'Profile', path: ROUTES.PROFILE, icon: 'User' },
@@ -37,64 +36,68 @@ const NAV_LINKS = [
 
 export function AppLayout() {
   return (
-    <div className="min-h-screen bg-tactical-bg text-tactical-text flex flex-col font-sans">
-      {/* Tactical Top Bar */}
-      <header className="border-b border-tactical-border bg-tactical-panel sticky top-0 z-40 backdrop-blur-md bg-opacity-95">
+    <div className="min-h-screen bg-app-bg text-text-primary flex flex-col font-sans">
+      {/* SaaS Top Navigation Bar */}
+      <header className="border-b border-border-subtle bg-card-bg sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4">
             {/* Brand Logo & Name */}
-            <Link
-              to={ROUTES.DASHBOARD}
-              className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-tactical-primary rounded p-1"
-            >
-              <div className="flex h-9 w-9 items-center justify-center rounded-md border border-tactical-primary/40 bg-tactical-primary/10 text-tactical-primary group-hover:border-tactical-primary transition-colors">
-                <Crosshair className="h-5 w-5" />
-              </div>
-              <div>
-                <span className="font-bold tracking-wider text-tactical-text text-lg block leading-none font-mono">
-                  DEV<span className="text-tactical-primary">RAID</span>
-                </span>
-                <span className="text-[10px] tracking-widest text-tactical-muted uppercase block leading-tight font-mono">
-                  TACTICAL CAMPAIGN OPS
-                </span>
-              </div>
-            </Link>
-
-            {/* System Status Pill */}
-            <div className="hidden md:flex items-center gap-2 border border-tactical-border bg-tactical-bg/60 px-3 py-1 rounded-full text-xs font-mono text-tactical-muted">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-tactical-secondary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-tactical-secondary"></span>
-              </span>
-              <span className="text-tactical-secondary font-medium tracking-wide">
-                SYS.ONLINE
-              </span>
-              <span className="text-tactical-border">|</span>
-              <span>PHASE 1 BUILD</span>
+            <div className="flex items-center gap-6">
+              <Link
+                to={ROUTES.DASHBOARD}
+                className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/40 rounded-md p-1"
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-subtle border border-[#D6E5DA] text-accent-primary group-hover:bg-[#E2EDE5] transition-colors">
+                  <Target className="h-4 w-4" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-text-primary text-base tracking-tight">
+                    DevRaid
+                  </span>
+                  <span className="text-[11px] text-text-secondary bg-[#F1F3F5] px-1.5 py-0.5 rounded font-medium border border-border-subtle">
+                    Platform
+                  </span>
+                </div>
+              </Link>
             </div>
 
-            {/* Test Links / Quick Navigation Helper */}
-            <div className="flex items-center gap-2">
+            {/* Top Right Controls & Quick Route Verifiers */}
+            <div className="flex items-center gap-3">
+              <Badge variant="success" dot className="hidden md:inline-flex">
+                Campaign Live
+              </Badge>
+
+              {/* Discreet test pills to verify route resolution */}
+              <div className="hidden sm:flex items-center gap-1.5 border-l border-border-subtle pl-3 text-xs">
+                <Link
+                  to="/targets/tgt-alpha-01"
+                  className="px-2 py-1 rounded text-text-secondary hover:text-text-primary hover:bg-[#F1F3F5] transition-colors"
+                  title="Verify Dynamic /targets/:id route"
+                >
+                  Test :id
+                </Link>
+                <Link
+                  to="/non-existent-sector"
+                  className="px-2 py-1 rounded text-text-secondary hover:text-accent-warning hover:bg-[#FCF5ED] transition-colors"
+                  title="Verify 404 handler"
+                >
+                  Test 404
+                </Link>
+              </div>
+
+              {/* Primary Action Button */}
               <Link
-                to="/targets/tgt-alpha-01"
-                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded border border-tactical-border bg-tactical-bg text-tactical-muted hover:text-tactical-primary hover:border-tactical-primary/50 transition-colors font-mono"
-                title="Verify Dynamic Target Route"
+                to={ROUTES.TARGET_NEW}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-text-primary px-3.5 py-1.5 text-xs font-medium text-white hover:bg-[#2D333B] active:bg-[#121519] transition-colors shadow-xs"
               >
-                <Radio className="h-3.5 w-3.5 text-tactical-secondary" />
-                <span>Test :id Route</span>
-              </Link>
-              <Link
-                to="/unknown-tactical-sector"
-                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded border border-tactical-border bg-tactical-bg text-tactical-muted hover:text-tactical-warning hover:border-tactical-warning/50 transition-colors font-mono"
-                title="Verify 404 Route"
-              >
-                <span>Test 404</span>
+                <Plus className="h-3.5 w-3.5" />
+                <span>New Target</span>
               </Link>
             </div>
           </div>
 
-          {/* Primary Navigation Strip */}
-          <nav className="flex space-x-1 overflow-x-auto py-2 scrollbar-none border-t border-tactical-border/40">
+          {/* Primary Navigation Tabs */}
+          <nav className="flex space-x-1 overflow-x-auto py-1 scrollbar-none border-t border-border-subtle/60">
             {NAV_LINKS.map((item) => {
               const IconComponent = NAV_ICONS[item.icon];
               return (
@@ -103,14 +106,14 @@ export function AppLayout() {
                   to={item.path}
                   end={item.path === ROUTES.DASHBOARD}
                   className={({ isActive }) =>
-                    `flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium tracking-wide whitespace-nowrap transition-all ${
+                    `flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors ${
                       isActive
-                        ? 'bg-tactical-primary/10 text-tactical-primary border border-tactical-primary/40 font-semibold'
-                        : 'text-tactical-muted hover:text-tactical-text hover:bg-tactical-bg/50 border border-transparent'
+                        ? 'bg-green-subtle text-text-success border border-[#D6E5DA]'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-[#F1F3F5] border border-transparent'
                     }`
                   }
                 >
-                  {IconComponent && <IconComponent className="h-3.5 w-3.5" />}
+                  {IconComponent && <IconComponent className="h-3.5 w-3.5 shrink-0" />}
                   <span>{item.label}</span>
                 </NavLink>
               );
@@ -124,17 +127,16 @@ export function AppLayout() {
         <Outlet />
       </main>
 
-      {/* Tactical Footer */}
-      <footer className="border-t border-tactical-border bg-tactical-panel mt-auto py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-tactical-muted font-mono">
+      {/* Minimalist SaaS Footer */}
+      <footer className="border-t border-border-subtle bg-card-bg mt-auto py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-text-secondary">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-tactical-secondary" />
-            <span>DEVRAID PROTOCOL // FOUNDATION ARCHITECTURE</span>
+            <span>DevRaid — Community Campaign Coordination Platform</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span>REACT + VITE + TAILWIND CSS</span>
-            <span className="text-tactical-border">|</span>
-            <span className="text-tactical-secondary">STANDALONE FRONTEND</span>
+          <div className="flex items-center gap-3">
+            <span>Phase 1 Foundation</span>
+            <span className="text-border-subtle">•</span>
+            <span className="text-text-success font-medium">Clean SaaS Design</span>
           </div>
         </div>
       </footer>

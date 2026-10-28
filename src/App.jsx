@@ -13,7 +13,7 @@ import NotFoundPage from './pages/NotFoundPage';
 
 /**
  * DevRaid Root Application Component.
- * Configures client-side routing, shared layouts, and tactical sector navigation.
+ * Configures client-side routing, shared layouts, and modern SaaS navigation.
  */
 export function App() {
   return (
@@ -27,7 +27,7 @@ export function App() {
           <Route path="targets/new" element={<CreateTargetPage />} />
           <Route path="targets/:id" element={<TargetDetailsPage />} />
 
-          {/* Supplementary Tactical Pages */}
+          {/* Platform Navigation Pages */}
           <Route path="activity" element={<ActivityPage />} />
           <Route path="leaderboard" element={<LeaderboardPage />} />
           <Route path="community" element={<CommunityPage />} />

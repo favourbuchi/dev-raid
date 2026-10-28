@@ -11,31 +11,33 @@ export function ActivityPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-tactical-border pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border-subtle pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <Activity className="h-6 w-6 text-tactical-primary" />
-            <h1 className="text-2xl font-bold tracking-tight text-tactical-text font-mono">
+            <Activity className="h-5 w-5 text-accent-primary" />
+            <h1 className="text-xl font-semibold tracking-tight text-text-primary">
               Activity Log
             </h1>
-            <Badge variant="muted">Audit Stream</Badge>
+            <Badge variant="neutral">Feed</Badge>
           </div>
-          <p className="mt-1 text-sm text-tactical-muted">
-            Chronological audit stream of target completions, verification events, and tactical milestone achievements.
+          <p className="mt-1 text-sm text-text-secondary">
+            Chronological log of member submissions, verification reviews, and campaign milestones.
           </p>
         </div>
       </div>
 
       <Card
-        title="Event Audit Feed"
+        title="Recent Activity"
         subtitle="Phase 1 Placeholder"
       >
-        <div className="space-y-3 text-sm text-tactical-muted">
+        <div className="space-y-4 text-sm text-text-secondary">
           <p>
-            Real-time activity telemetry and event filtering will be implemented in subsequent phases.
+            Real-time activity logs, filters by squad or objective, and event details will be available here.
           </p>
-          <div className="rounded border border-dashed border-tactical-border p-6 text-center text-xs font-mono text-tactical-muted">
-            NO ACTIVE EVENTS LOGGED // STREAM STANDBY
+          <div className="rounded-lg border border-border-subtle bg-[#F8F9FA] p-8 text-center">
+            <p className="text-xs text-text-secondary font-medium">
+              No recent activity recorded. Member events will stream here during Phase 2.
+            </p>
           </div>
         </div>
       </Card>

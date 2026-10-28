@@ -1,31 +1,33 @@
 import React from 'react';
 
 /**
- * Reusable tactical status badge adhering to design tokens:
- * - primary: #A3FF12
- * - secondary: #00D9A6
- * - warning: #FFB547
- * - muted: #8B9891
+ * Reusable Badge component for modern SaaS interface:
+ * Understated, soft background colors with high-contrast readable text.
  */
 const VARIANTS = {
-  primary:
-    'bg-tactical-primary/10 text-tactical-primary border-tactical-primary/30',
-  secondary:
-    'bg-tactical-secondary/10 text-tactical-secondary border-tactical-secondary/30',
+  success:
+    'bg-green-subtle text-text-success border border-[#D6E5DA]',
   warning:
-    'bg-tactical-warning/10 text-tactical-warning border-tactical-warning/30',
-  muted:
-    'bg-tactical-border/50 text-tactical-muted border-tactical-border',
+    'bg-[#FCF5ED] text-accent-warning border border-[#F2DFC7]',
+  neutral:
+    'bg-[#F1F3F5] text-text-secondary border border-border-subtle',
+  accent:
+    'bg-green-subtle text-accent-primary border border-[#D6E5DA]',
 };
 
-export function Badge({ children, variant = 'primary', className = '' }) {
-  const variantClass = VARIANTS[variant] || VARIANTS.primary;
+export function Badge({
+  children,
+  variant = 'neutral',
+  className = '',
+  dot = false,
+}) {
+  const variantClass = VARIANTS[variant] || VARIANTS.neutral;
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium tracking-wide uppercase ${variantClass} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium tracking-normal ${variantClass} ${className}`}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" />
+      {dot && <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" />}
       {children}
     </span>
   );

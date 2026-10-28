@@ -1,6 +1,6 @@
 /**
- * Application route definitions and tactical navigation metadata.
- * Centralizing routes avoids hardcoding paths and ensures maintainability.
+ * Application route definitions and navigation metadata for DevRaid.
+ * Centralizing routes avoids hardcoded paths and simplifies future refactoring.
  */
 export const ROUTES = {
   DASHBOARD: '/',

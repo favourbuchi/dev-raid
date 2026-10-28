@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
-import { Target, ArrowLeft, Radio } from 'lucide-react';
+import { Target, ArrowLeft, Info } from 'lucide-react';
 
 /**
  * Target Details placeholder page.
@@ -14,53 +14,55 @@ export function TargetDetailsPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-tactical-border pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border-subtle pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <Target className="h-6 w-6 text-tactical-secondary" />
-            <h1 className="text-2xl font-bold tracking-tight text-tactical-text font-mono">
+            <Target className="h-5 w-5 text-accent-primary" />
+            <h1 className="text-xl font-semibold tracking-tight text-text-primary">
               Target Details
             </h1>
-            <Badge variant="secondary">Dynamic Sector</Badge>
+            <Badge variant="neutral">Dynamic Route</Badge>
           </div>
-          <p className="mt-1 text-sm text-tactical-muted">
-            Detailed mission brief, verification requirements, and squad completion status for this objective.
+          <p className="mt-1 text-sm text-text-secondary">
+            Inspect target criteria, verification guidelines, and member submission status.
           </p>
         </div>
 
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 rounded-md border border-tactical-border bg-tactical-bg px-3 py-1.5 text-xs font-mono text-tactical-muted transition-colors hover:text-tactical-text hover:border-tactical-border/80"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border-subtle bg-card-bg px-3.5 py-1.5 text-xs font-medium text-text-secondary hover:text-text-primary hover:bg-[#F8F9FA] transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           <span>Back to Operations</span>
         </Link>
       </div>
 
-      {/* Target ID Parameter Inspector */}
+      {/* Target Identifier Resolution */}
       <Card
-        title="Target Identifier Resolution"
-        subtitle="Route parameter inspection"
+        title="Target Resolution"
+        subtitle="Dynamic route parameter inspection"
       >
-        <div className="space-y-4 text-sm text-tactical-muted">
-          <div className="flex items-center gap-3 rounded-md border border-tactical-border bg-tactical-bg p-4 font-mono">
-            <Radio className="h-5 w-5 text-tactical-secondary shrink-0" />
+        <div className="space-y-4 text-sm text-text-secondary">
+          <div className="flex items-center gap-3 rounded-lg border border-border-subtle bg-[#F8F9FA] p-4">
+            <div className="h-8 w-8 rounded-md bg-card-bg border border-border-subtle flex items-center justify-center text-text-secondary shrink-0">
+              <Info className="h-4 w-4" />
+            </div>
             <div>
-              <span className="text-xs text-tactical-muted uppercase block">
-                Extracted Route Parameter (:id)
+              <span className="text-xs text-text-secondary block font-medium">
+                Resolved Target ID (:id)
               </span>
-              <span className="text-lg font-bold text-tactical-primary">
+              <span className="text-base font-semibold text-text-primary font-mono">
                 {id || 'UNDEFINED'}
               </span>
             </div>
           </div>
 
-          <p>
-            This page dynamically inspects the <code className="text-tactical-secondary">:id</code> URL parameter via React Router's <code className="text-tactical-primary">useParams()</code> hook.
+          <p className="leading-relaxed">
+            This route retrieves the target identifier dynamically from the URL using React Router's <code className="font-medium text-text-primary bg-[#F1F3F5] px-1.5 py-0.5 rounded border border-border-subtle">useParams()</code> hook.
           </p>
 
-          <p className="text-xs text-tactical-muted">
-            In future phases, this ID will query the data service to fetch target criteria, progress telemetry, and squad completion audits.
+          <p className="text-xs text-text-secondary">
+            In future phases, this view will load full target specifications, submission proof requirements, and community completion telemetry.
           </p>
         </div>
       </Card>

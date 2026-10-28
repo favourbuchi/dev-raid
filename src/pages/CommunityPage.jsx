@@ -11,17 +11,17 @@ export function CommunityPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-tactical-border pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border-subtle pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <Users className="h-6 w-6 text-tactical-secondary" />
-            <h1 className="text-2xl font-bold tracking-tight text-tactical-text font-mono">
+            <Users className="h-5 w-5 text-accent-primary" />
+            <h1 className="text-xl font-semibold tracking-tight text-text-primary">
               Community Overview
             </h1>
-            <Badge variant="secondary">Guilds & Squads</Badge>
+            <Badge variant="accent">Guilds & Squads</Badge>
           </div>
-          <p className="mt-1 text-sm text-tactical-muted">
-            Directory of participating squads, community guidelines, and collaborative coalition progress.
+          <p className="mt-1 text-sm text-text-secondary">
+            Directory of participating teams, contributor rosters, and collaborative initiatives.
           </p>
         </div>
       </div>
@@ -30,12 +30,14 @@ export function CommunityPage() {
         title="Squad Directory"
         subtitle="Phase 1 Placeholder"
       >
-        <div className="space-y-3 text-sm text-tactical-muted">
+        <div className="space-y-4 text-sm text-text-secondary">
           <p>
-            Community squad rosters, team alignments, and collective milestones will be displayed here.
+            Team directories, guild rosters, and member participation metrics will appear here.
           </p>
-          <div className="rounded border border-dashed border-tactical-border p-6 text-center text-xs font-mono text-tactical-muted">
-            SQUAD ROSTERS OFFLINE // RECRUITMENT AND REGISTRATION PENDING
+          <div className="rounded-lg border border-border-subtle bg-[#F8F9FA] p-8 text-center">
+            <p className="text-xs text-text-secondary font-medium">
+              Community rosters will be available once member management is wired in upcoming phases.
+            </p>
           </div>
         </div>
       </Card>

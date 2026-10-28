@@ -1,7 +1,7 @@
 import React from 'react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
-import { PlusCircle, CheckCircle2 } from 'lucide-react';
+import { PlusCircle, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 /**
@@ -13,56 +13,55 @@ export function CreateTargetPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-tactical-border pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border-subtle pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <PlusCircle className="h-6 w-6 text-tactical-primary" />
-            <h1 className="text-2xl font-bold tracking-tight text-tactical-text font-mono">
+            <PlusCircle className="h-5 w-5 text-accent-primary" />
+            <h1 className="text-xl font-semibold tracking-tight text-text-primary">
               Create Target
             </h1>
-            <Badge variant="primary">Route: /targets/new</Badge>
+            <Badge variant="accent">/targets/new</Badge>
           </div>
-          <p className="mt-1 text-sm text-tactical-muted">
-            Configure new engagement targets, define tactical criteria, and allocate milestone reward points.
+          <p className="mt-1 text-sm text-text-secondary">
+            Define a new engagement target, set validation guidelines, and allocate completion reward points.
           </p>
         </div>
 
         <Link
           to="/"
-          className="inline-flex items-center justify-center rounded-md border border-tactical-border bg-tactical-bg px-4 py-2 text-xs font-mono text-tactical-muted transition-colors hover:text-tactical-text hover:border-tactical-border/80"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border-subtle bg-card-bg px-3.5 py-1.5 text-xs font-medium text-text-secondary hover:text-text-primary hover:bg-[#F8F9FA] transition-colors"
         >
-          Cancel & Return
+          <ArrowLeft className="h-3.5 w-3.5" />
+          <span>Back to Operations</span>
         </Link>
       </div>
 
-      {/* Placeholder Form Notice */}
+      {/* Target Authoring Notice */}
       <Card
         title="Target Authoring Workspace"
         subtitle="Phase 1 Placeholder"
       >
-        <div className="space-y-4 text-sm text-tactical-muted">
-          <p>
-            This route serves as the authoring suite for community leaders to initialize new targets, set completion thresholds, and specify proof verification parameters.
+        <div className="space-y-4 text-sm text-text-secondary">
+          <p className="leading-relaxed">
+            This route serves as the authoring workspace where campaign leaders create new targets, set verification requirements, and configure point weights.
           </p>
 
-          <div className="rounded-md border border-tactical-secondary/30 bg-tactical-secondary/5 p-4 text-xs font-mono text-tactical-secondary space-y-2">
-            <div className="flex items-center gap-2 font-semibold text-tactical-text">
-              <CheckCircle2 className="h-4 w-4 text-tactical-secondary" />
+          <div className="rounded-lg border border-[#D6E5DA] bg-green-subtle/50 p-4 text-xs space-y-2">
+            <div className="flex items-center gap-2 font-medium text-text-success">
+              <CheckCircle2 className="h-4 w-4 text-text-success shrink-0" />
               <span>Route Resolution Verification</span>
             </div>
-            <p className="text-tactical-muted">
-              Current route path: <code className="text-tactical-primary">/targets/new</code>
+            <p className="text-text-secondary">
+              Active route: <code className="font-semibold text-text-primary bg-card-bg px-1.5 py-0.5 rounded border border-border-subtle">/targets/new</code>
             </p>
-            <p className="text-tactical-muted">
-              Status: Correctly matched to CreateTargetPage rather than being intercepted by the dynamic <code className="text-tactical-secondary">/targets/:id</code> parameter.
+            <p className="text-text-secondary">
+              Resolution status: Correctly matched to <span className="font-medium text-text-primary">CreateTargetPage</span> rather than being caught by the dynamic <code className="text-text-primary">/targets/:id</code> parameter.
             </p>
           </div>
 
-          <div className="pt-2">
-            <p className="text-xs text-tactical-muted">
-              Form inputs, validation rules, and state management will be implemented in subsequent phases.
-            </p>
-          </div>
+          <p className="text-xs text-text-secondary">
+            Target creation forms, criteria builders, and validation rules will be introduced in subsequent phases.
+          </p>
         </div>
       </Card>
     </div>
