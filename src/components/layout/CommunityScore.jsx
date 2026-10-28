@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Sparkles } from 'lucide-react';
+import { AppDataContext } from '../../context/AppDataContext';
 import { MOCK_COMMUNITY_SCORE } from '../../data/mockData';
 
 /**
  * Reusable CommunityScore component.
  * Displays collective community points in the topbar or mobile drawer.
- * Data source is isolated in mockData to ensure straightforward Supabase
- * synchronization in later phases.
+ * Pulls from centralized AppDataContext dynamically to reflect live target completions,
+ * with graceful fallback to mock data when rendered outside provider.
  *
  * @param {Object} props
  * @param {Object} [props.scoreData] - Optional score object ({ formatted, unit, label })
@@ -14,11 +15,13 @@ import { MOCK_COMMUNITY_SCORE } from '../../data/mockData';
  * @param {string} [props.className] - Additional CSS classes
  */
 export function CommunityScore({
-  scoreData = MOCK_COMMUNITY_SCORE,
+  scoreData,
   compact = false,
   className = '',
 }) {
-  const { formatted, unit, label } = scoreData;
+  const context = useContext(AppDataContext);
+  const liveScore = scoreData || context?.communityScore || MOCK_COMMUNITY_SCORE;
+  const { formatted, unit, label } = liveScore;
 
   if (compact) {
     return (

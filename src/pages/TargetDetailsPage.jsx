@@ -5,16 +5,18 @@ import {
   ExternalLink,
   Copy,
   Check,
+  CheckCircle2,
   Calendar,
   Clock,
   Sparkles,
   AlertCircle,
-  HelpCircle,
   History,
+  RotateCcw,
+  Zap,
 } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
-import { getTargetById } from '../data/mockData';
+import { useAppData } from '../context/AppDataContext';
 import { ROUTES } from '../utils/constants';
 import {
   formatDate,
@@ -25,12 +27,14 @@ import {
 
 /**
  * Target Details Page (Route: /targets/:id)
- * Dynamic page that fetches target specifications by ID from centralized mock data,
+ * Dynamic page that fetches target specifications by ID from centralized context,
  * displays mission guidelines, security-attributed destination link, clipboard copy,
- * and completion history placeholder.
+ * interactive completion / undo workflow, and live activity audit trail.
  */
 export function TargetDetailsPage() {
   const { id } = useParams();
+  const { getTargetById, completeTarget, undoCompleteTarget, activities } =
+    useAppData();
   const target = getTargetById(id);
 
   const [copied, setCopied] = useState(false);
@@ -94,6 +98,7 @@ export function TargetDetailsPage() {
   }
 
   const isCompleted = target.status === 'completed';
+  const targetActivities = activities.filter((a) => a.targetId === target.id);
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -116,7 +121,7 @@ export function TargetDetailsPage() {
               variant={getStatusBadgeVariant(target.status)}
               dot={!isCompleted}
             >
-              {target.status === 'active' ? 'Active Target' : 'Completed Target'}
+              {isCompleted ? 'Completed Target' : 'Active Target'}
             </Badge>
 
             <Badge variant={getPriorityBadgeVariant(target.priority)}>
@@ -126,7 +131,13 @@ export function TargetDetailsPage() {
             <Badge variant="outline">{target.platform}</Badge>
           </div>
 
-          <div className="inline-flex items-center gap-1 rounded-md border border-[#D6E5DA] bg-green-subtle px-3 py-1 text-sm font-semibold text-text-success">
+          <div
+            className={`inline-flex items-center gap-1 rounded-md border px-3 py-1 text-sm font-semibold ${
+              isCompleted
+                ? 'border-border-subtle bg-[#F8F9FA] text-text-secondary'
+                : 'border-[#D6E5DA] bg-green-subtle text-text-success'
+            }`}
+          >
             <Sparkles className="h-4 w-4" />
             <span>+{target.points} Community Points</span>
           </div>
@@ -140,6 +151,72 @@ export function TargetDetailsPage() {
             {target.description}
           </p>
         </div>
+      </Card>
+
+      {/* Target Status & Actions Card */}
+      <Card
+        title="Operation Status & Actions"
+        subtitle="Manage objective completion and community point verification"
+      >
+        {isCompleted ? (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border border-[#D6E5DA] bg-green-subtle">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-text-success" />
+                <span className="text-sm font-semibold text-text-primary">
+                  Objective Completed
+                </span>
+                <Badge variant="success">Verified</Badge>
+              </div>
+              <p className="text-xs text-text-secondary">
+                Completed by{' '}
+                <span className="font-medium text-text-primary">
+                  {target.completedBy || 'Alex Rivers'}
+                </span>{' '}
+                on {formatDateTime(target.completedAt)}.{' '}
+                <span className="text-text-success font-semibold">
+                  +{target.points} points awarded
+                </span>
+                .
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => undoCompleteTarget(target.id)}
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg border border-border-subtle bg-card-bg text-xs font-medium text-text-secondary hover:text-text-primary hover:bg-[#F8F9FA] transition-colors shrink-0 shadow-2xs"
+              title="Undo completion and reverse awarded points"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span>Undo Completion</span>
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border border-[#D6E5DA] bg-green-subtle">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4 text-text-success" />
+                <span className="text-sm font-semibold text-text-primary">
+                  Target is Active and Open for Claims
+                </span>
+              </div>
+              <p className="text-xs text-text-secondary">
+                Complete this objective and submit verification. Marking it completed will immediately award{' '}
+                <span className="font-semibold text-text-success">
+                  +{target.points} community points
+                </span>{' '}
+                to the collective scoreboard.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => completeTarget(target.id)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-text-primary text-white text-xs sm:text-sm font-medium hover:bg-[#2D333B] active:bg-[#121519] transition-colors shadow-xs shrink-0"
+            >
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Mark as Completed</span>
+            </button>
+          </div>
+        )}
       </Card>
 
       {/* Destination URL & Direct Actions Card */}
@@ -239,7 +316,7 @@ export function TargetDetailsPage() {
           </span>
           <div className="flex items-center gap-2 mt-2 text-sm font-medium text-text-primary">
             <Badge variant={getStatusBadgeVariant(target.status)} dot={!isCompleted}>
-              {target.status === 'active' ? 'Open for claims' : 'Completed'}
+              {isCompleted ? 'Completed' : 'Open for claims'}
             </Badge>
           </div>
           <span className="text-[11px] text-text-secondary block mt-1">
@@ -250,26 +327,68 @@ export function TargetDetailsPage() {
         </Card>
       </div>
 
-      {/* Completion History Section */}
+      {/* Completion History / Audit Trail Section */}
       <Card
         title="Completion History"
-        subtitle="Verification audit trail for member completions"
+        subtitle="Verification audit trail for member completions and reversals"
       >
-        <div className="rounded-lg border border-dashed border-border-subtle bg-[#F8F9FA] p-8 text-center flex flex-col items-center justify-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-card-bg border border-border-subtle text-text-secondary mb-3 shadow-2xs">
-            <History className="h-5 w-5" />
+        {targetActivities.length > 0 ? (
+          <div className="divide-y divide-border-subtle/80">
+            {targetActivities.map((act) => {
+              const isUndo = act.type === 'target_completion_undone';
+              return (
+                <div
+                  key={act.id}
+                  className="py-3.5 first:pt-0 last:pb-0 flex items-start justify-between gap-3"
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-lg mt-0.5 shrink-0 ${
+                        isUndo
+                          ? 'bg-[#F1F3F5] text-text-secondary'
+                          : 'bg-green-subtle border border-[#D6E5DA] text-text-success'
+                      }`}
+                    >
+                      {isUndo ? (
+                        <RotateCcw className="h-4 w-4" />
+                      ) : (
+                        <CheckCircle2 className="h-4 w-4" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold text-text-primary">
+                          {isUndo ? 'Completion Undone' : 'Target Completed'}
+                        </span>
+                        <Badge variant={isUndo ? 'neutral' : 'success'}>
+                          {isUndo ? `-${act.points} pts` : `+${act.points} pts`}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-text-secondary mt-0.5">
+                        Logged by <span className="font-medium text-text-primary">{act.actor}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[11px] text-text-secondary shrink-0 mt-0.5">
+                    {formatDateTime(act.timestamp)}
+                  </span>
+                </div>
+              );
+            })}
           </div>
-          <h3 className="text-sm font-semibold text-text-primary">
-            No completion activity logged yet
-          </h3>
-          <p className="mt-1 text-xs text-text-secondary max-w-md leading-relaxed">
-            Member proof submissions, review verifications, and point distribution records will appear here once member claim management is connected in Phase 4.
-          </p>
-          <div className="mt-3 flex items-center gap-1.5 text-[11px] text-text-secondary bg-card-bg px-2.5 py-1 rounded border border-border-subtle">
-            <HelpCircle className="h-3.5 w-3.5 text-text-secondary" />
-            <span>Target completion engine scheduled for Phase 4</span>
+        ) : (
+          <div className="rounded-lg border border-dashed border-border-subtle bg-[#F8F9FA] p-8 text-center flex flex-col items-center justify-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-card-bg border border-border-subtle text-text-secondary mb-3 shadow-2xs">
+              <History className="h-5 w-5" />
+            </div>
+            <h3 className="text-sm font-semibold text-text-primary">
+              No completion activity logged yet
+            </h3>
+            <p className="mt-1 text-xs text-text-secondary max-w-md leading-relaxed">
+              When members mark this target as completed or reverse a completion, timestamped verification records will appear here.
+            </p>
           </div>
-        </div>
+        )}
       </Card>
     </div>
   );

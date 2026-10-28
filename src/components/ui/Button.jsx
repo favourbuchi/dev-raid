@@ -15,6 +15,8 @@ const VARIANTS = {
     'bg-card-bg text-text-primary border border-border-subtle hover:bg-[#F3F4F6] hover:border-[#D1D5DB] active:bg-[#E5E7EB]',
   accent:
     'bg-green-subtle text-text-success border border-[#D6E5DA] hover:bg-[#E2EDE5] active:bg-[#D5E4D9]',
+  danger:
+    'bg-[#FDF2F2] text-[#991B1B] border border-[#F8D7DA] hover:bg-[#FEE2E2] active:bg-[#FECACA]',
   ghost:
     'bg-transparent text-text-secondary hover:text-text-primary hover:bg-[#F1F3F5] border border-transparent',
 };

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import { useAppData } from '../context/AppDataContext';
 import { ROUTES } from '../utils/constants';
 
 const PLATFORM_OPTIONS = [
@@ -55,6 +56,7 @@ function isValidUrl(urlString) {
  * Form sections have generous padding, subtle dividers, and polished typography.
  */
 export function CreateTargetPage() {
+  const { createTarget } = useAppData();
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
   const [submittedPreview, setSubmittedPreview] = useState(null);
@@ -112,12 +114,11 @@ export function CreateTargetPage() {
     e.preventDefault();
 
     if (validate()) {
-      // Store preview submission without writing to backend/localStorage
-      setSubmittedPreview({
+      const newTarget = createTarget({
         ...formData,
         points: Number(formData.points),
-        submittedAt: new Date().toISOString(),
       });
+      setSubmittedPreview(newTarget);
       // Scroll smoothly to top to review notification banner
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -141,18 +142,24 @@ export function CreateTargetPage() {
         <div className="rounded-lg border border-[#D6E5DA] bg-green-subtle p-5 text-sm space-y-2 animate-in fade-in-50 duration-200">
           <div className="flex items-center gap-2 font-semibold text-text-success">
             <CheckCircle2 className="h-5 w-5 text-text-success shrink-0" />
-            <span>Target Preview Validated</span>
+            <span>Target Published Successfully</span>
           </div>
           <p className="text-text-primary text-xs sm:text-sm leading-relaxed">
-            Your target configuration for{' '}
+            Your target objective for{' '}
             <span className="font-semibold text-text-primary">
               "{submittedPreview.title}"
             </span>{' '}
-            is valid. Persistent target publishing will be activated when application state management is implemented in Phase 4.
+            is now active in campaign operations and available for verification claims.
           </p>
-          <p className="text-[11px] text-text-secondary">
-            Your form inputs have been preserved below for review or editing.
-          </p>
+          <div className="pt-1 flex items-center gap-3">
+            <Link
+              to={ROUTES.DASHBOARD}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-text-success hover:underline"
+            >
+              <span>View in Operations Dashboard</span>
+              <ArrowLeft className="h-3.5 w-3.5 rotate-180" />
+            </Link>
+          </div>
         </div>
       )}
 

@@ -12,11 +12,7 @@ import {
 import Card from '../components/ui/Card';
 import TargetCard from '../components/targets/TargetCard';
 import TargetFilters from '../components/targets/TargetFilters';
-import {
-  MOCK_TARGETS,
-  MOCK_COMMUNITY_SCORE,
-  getTargetStats,
-} from '../data/mockData';
+import { useAppData } from '../context/AppDataContext';
 import { ROUTES } from '../utils/constants';
 
 /**
@@ -28,12 +24,12 @@ export function DashboardPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'active' | 'completed'
 
-  // Derived statistics directly from mock collection
-  const stats = useMemo(() => getTargetStats(MOCK_TARGETS), []);
+  // Centralized state from AppDataContext
+  const { targets, stats, communityScore } = useAppData();
 
   // Filtered target collection based on status and search query
   const filteredTargets = useMemo(() => {
-    return MOCK_TARGETS.filter((target) => {
+    return targets.filter((target) => {
       // Status filter check
       const matchesStatus =
         statusFilter === 'all' ? true : target.status === statusFilter;
@@ -49,7 +45,7 @@ export function DashboardPage() {
 
       return matchesStatus && matchesSearch;
     });
-  }, [searchTerm, statusFilter]);
+  }, [targets, searchTerm, statusFilter]);
 
   function handleResetFilters() {
     setSearchTerm('');
@@ -152,7 +148,7 @@ export function DashboardPage() {
           </div>
           <div className="mt-3">
             <span className="text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">
-              {MOCK_COMMUNITY_SCORE.formatted}
+              {communityScore.formatted}
             </span>
             <span className="text-xs text-text-secondary block mt-1">
               Total points earned to date
